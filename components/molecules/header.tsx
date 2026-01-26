@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 export const Header = () => {
-    return <header className="sticky top-0 h-[80px] bg-amber-200 flex items-center justify-center px-4">
+    return <header className="sticky top-0 h-[80px] bg-amber-200 flex items-center justify-center px-4 z-50 border-b-1 border-b-amber-300">
         <div className="w-full max-w-[760px] flex items-center justify-between">
             <div>
                 <Link href="/">홈</Link>

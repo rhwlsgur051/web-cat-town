@@ -61,9 +61,9 @@ export const JoinPage = () => {
         <Image src={Logo.src} className="m-1" alt="logo" width={100} />
         
         {/* Logo Text */}
-        <h1 className="font-luckiest text-3xl font-bold">회원가입</h1>
+        <h1 className="text-3xl font-bold">회원가입</h1>
         
-        <div className="flex flex-col gap-4 w-full">
+        <div className="flex flex-col gap-4 w-full items-center">
             {/* 아이디 */}
             <Input 
                 {...register('id', { 
