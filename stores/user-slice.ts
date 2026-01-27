@@ -2,26 +2,30 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // localStorage에 저장될 상태 (영구 저장)
 interface UserState {
-  email: string | null;
-  name: string | null;
+  userId: string | null;
+  userEmail: string | null;
+  userName: string | null;
 }
 
 const initialState: UserState = {
-  email: null,
-  name: null,
+  userId: null,
+  userEmail: null,
+  userName: null,
 };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<{ id: string; email: string; name: string }>) {
-      state.email = action.payload.email;
-      state.name = action.payload.name;
+    setUser(state, action: PayloadAction<{ userId: string; userEmail: string; userName: string }>) {
+      state.userId = action.payload.userId;
+      state.userEmail = action.payload.userEmail;
+      state.userName = action.payload.userName;
     },
     clearUser(state) {
-      state.email = null;
-      state.name = null;
+      state.userId = null;
+      state.userEmail = null;
+      state.userName = null;
     },
   },
 });

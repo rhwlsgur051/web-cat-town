@@ -1,68 +1,111 @@
-import Image from "next/image";
+'use client'
+
+import { PostCard } from "@/components/molecules/post-card";
+import { Button } from "@heroui/react";
+
+// 임시 데이터
+const MOCK_POSTS = [
+  {
+    id: 1,
+    author: {
+      name: "냥집사",
+      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d"
+    },
+    content: "우리 고양이가 오늘 처음으로 츄르를 먹었어요! 🐱\n너무 귀여운 모습이라 사진 찍었습니다 ㅎㅎ",
+    image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&h=400&fit=crop",
+    likes: 42,
+    comments: 8,
+    createdAt: "2시간 전"
+  },
+  {
+    id: 2,
+    author: {
+      name: "고양이사랑",
+      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d"
+    },
+    content: "오늘도 창가에서 햇빛 쬐는 우리 냥이 ☀️\n평화롭고 행복해 보여요~",
+    image: "https://images.unsplash.com/photo-1573865526739-10c1dd7013e8?w=600&h=400&fit=crop",
+    likes: 128,
+    comments: 15,
+    createdAt: "5시간 전"
+  },
+  {
+    id: 3,
+    author: {
+      name: "멍냥러버",
+      avatar: "https://i.pravatar.cc/150?u=a04258114e29026302d"
+    },
+    content: "고양이 간식 추천 받아요!\n우리 애가 입이 짧아서 잘 안먹더라구요 ㅠㅠ",
+    likes: 23,
+    comments: 31,
+    createdAt: "1일 전"
+  },
+  {
+    id: 4,
+    author: {
+      name: "캣타운주민",
+      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704f"
+    },
+    content: "새로 산 고양이 터널이 대박이에요!\n신나게 놀다가 지쳐서 잠든 모습 💤",
+    image: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=600&h=400&fit=crop",
+    likes: 89,
+    comments: 12,
+    createdAt: "1일 전"
+  },
+  {
+    id: 5,
+    author: {
+      name: "냥이집사",
+      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024f"
+    },
+    content: "고양이 병원 다녀왔어요.\n건강검진 결과 이상 없대요! 다행이다 😊",
+    likes: 67,
+    comments: 9,
+    createdAt: "2일 전"
+  },
+  {
+    id: 6,
+    author: {
+      name: "캣맘",
+      avatar: "https://i.pravatar.cc/150?u=a042581f4e29027007d"
+    },
+    content: "아기 고양이 입양했어요! 🎉\n이름은 뭐가 좋을까요? 추천 부탁드려요~",
+    image: "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=600&h=400&fit=crop",
+    likes: 156,
+    comments: 48,
+    createdAt: "3일 전"
+  }
+];
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div>
-          hello
+    <div className="w-full min-h-screen flex flex-col items-center py-6 px-4">
+      {/* 헤더 영역 */}
+      <div className="w-full max-w-[600px] mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold">피드</h1>
+          <Button color="primary" size="sm">
+            글쓰기
+          </Button>
         </div>
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}gd
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        <p className="text-default-500 text-sm">
+          집사들의 일상을 공유해보세요 🐱
+        </p>
+      </div>
+
+      {/* 게시글 목록 */}
+      <div className="w-full flex flex-col items-center gap-4">
+        {MOCK_POSTS.map((post) => (
+          <PostCard key={post.id} {...post} />
+        ))}
+      </div>
+
+      {/* 더보기 버튼 */}
+      <div className="mt-8">
+        <Button variant="bordered" size="lg">
+          더 보기
+        </Button>
+      </div>
     </div>
   );
 }

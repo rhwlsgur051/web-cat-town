@@ -4,7 +4,7 @@ import { Providers } from "../providers/providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cat Town 캣타운",
+  title: "캣타운",
   description: "집사들의 커뮤니티",
 };
 
