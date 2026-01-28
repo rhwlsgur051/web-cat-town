@@ -60,9 +60,6 @@ export const JoinPage = () => {
     };
 
     const onSubmit = (data: JoinFormData) => {
-        console.log('회원가입 데이터:', data);
-        console.log('고양이 목록:', cats);
-
         // 비밀번호 확인 검증
         if (data.userPwd !== data.userPwdConfirm) {
             setErrMsg('비밀번호가 일치하지 않습니다.');
@@ -99,7 +96,6 @@ export const JoinPage = () => {
     const joinMutation = useMutation({
         mutationFn: authApi.join,
         onSuccess: (data) => {
-            console.log('회원가입 성공:', data);
             // 여기에 실제 회원가입 API 호출 로직 추가
             setErrMsg('');
             alert('회원가입이 완료되었습니다!');
@@ -111,11 +107,6 @@ export const JoinPage = () => {
             setErrMsg(error.message);
         },
     });
-
-    useEffect(() => {
-        console.log('폼 유효성:', isValid);
-        console.log('에러:', errors);
-    }, [isValid, errors]);
 
     return <form className='max-w-[500px] w-full flex flex-col gap-4 items-center mt-12 px-4' onSubmit={handleSubmit(onSubmit)}>
         {/* Logo Box */}

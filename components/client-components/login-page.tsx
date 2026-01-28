@@ -45,7 +45,6 @@ export const LoginPage = () => {
     });
 
     const onSubmit = (data: LoginRequest) => {
-        console.log('로그인 시도:', data);
         setErrMsg(''); // 기존 에러 메시지 초기화
         
         // Mutation 실행
