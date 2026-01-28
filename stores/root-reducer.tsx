@@ -8,7 +8,7 @@ import { localStorage, sessionStorage } from "./storage";
 const userPersistConfig = {
   key: "user",
   storage: localStorage,
-  whitelist: ["id", "email", "name", "preferences"], // 저장할 필드
+  whitelist: ["userId", "userEmail", "userName"], // 저장할 필드
 };
 
 // sessionStorage persist 설정 (세션 저장)

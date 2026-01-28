@@ -31,7 +31,11 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
       // Redux 상태도 초기화 (localStorage persist도 함께 삭제)
       if (typeof window !== 'undefined') {
         localStorage.removeItem('persist:root'); // redux-persist 초기화
-        window.location.href = '/login';
+        
+        // 이미 로그인 페이지에 있으면 리다이렉트하지 않음
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/login';
+        }
       }
     }
 

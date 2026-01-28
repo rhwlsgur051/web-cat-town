@@ -2,6 +2,7 @@
 
 import { PostCard } from "@/components/molecules/post-card";
 import { Button } from "@heroui/react";
+import { useRouter } from "next/navigation";
 
 // 임시 데이터
 const MOCK_POSTS = [
@@ -78,13 +79,15 @@ const MOCK_POSTS = [
 ];
 
 export default function Home() {
+  const router = useRouter();
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center py-6 px-4">
       {/* 헤더 영역 */}
       <div className="w-full max-w-[600px] mb-6">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">피드</h1>
-          <Button color="primary" size="sm">
+          <Button color="primary" size="sm" onClick={() => router.push('/write')}>
             글쓰기
           </Button>
         </div>
