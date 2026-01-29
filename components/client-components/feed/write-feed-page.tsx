@@ -12,7 +12,7 @@ export const WriteFeedPage = () => {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
 
-    const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<CreateFeedRequest>({
+    const { register, handleSubmit, watch, formState: { errors } } = useForm<CreateFeedRequest>({
         mode: 'onChange',
         defaultValues: {
             feedContent: '',
@@ -21,13 +21,16 @@ export const WriteFeedPage = () => {
     });
 
     const content = watch('feedContent');
+    
+    // 폼 유효성 검사: 내용 + 이미지 필수
+    const isFormValid = !!content && content.length >= 1 && content.length <= 1000 && !!imageFile;
 
     // 피드 작성 Mutation
     const createFeedMutation = useMutation({
         mutationFn: feedApi.createFeed,
         onSuccess: () => {
             // 피드 작성 성공 시 메인 페이지로 이동
-            router.push('/');
+            // router.push('/');
         },
         onError: (error: any) => {
             console.error('피드 작성 실패:', error);
@@ -59,11 +62,18 @@ export const WriteFeedPage = () => {
         try {
             setErrMsg('');
 
-            // TODO: 이미지 업로드 로직 추가 (S3, Cloudinary 등)
-            // 현재는 이미지 URL을 직접 입력받거나, 
-            // 이미지 파일 업로드 후 URL을 받아와서 feedImageUrl에 설정
+            // 이미지 필수 검증
+            if (!imageFile) {
+                setErrMsg('이미지를 업로드해주세요.');
+                return;
+            }
+
+            // FormData 생성 (이미지 파일 포함)
+            const formData = new FormData();
+            formData.append('feedContent', data.feedContent);
+            formData.append('image', imageFile);
             
-            createFeedMutation.mutate(data);
+            createFeedMutation.mutate(formData as any);
         } catch (error) {
             console.error('Submit error:', error);
         }
@@ -103,7 +113,9 @@ export const WriteFeedPage = () => {
 
                 {/* 이미지 업로드 */}
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold">이미지 (선택)</label>
+                    <label className="text-sm font-semibold">
+                        이미지 <span className="text-red-500">*</span>
+                    </label>
                     
                     {imagePreview ? (
                         <div className="relative w-full">
@@ -144,7 +156,7 @@ export const WriteFeedPage = () => {
                 type="submit" 
                 color="primary" 
                 className="w-full" 
-                isDisabled={!isValid || createFeedMutation.isPending}
+                isDisabled={!isFormValid || createFeedMutation.isPending}
                 isLoading={createFeedMutation.isPending}
                 size="lg"
             >

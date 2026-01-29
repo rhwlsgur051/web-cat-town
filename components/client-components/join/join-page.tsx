@@ -1,10 +1,9 @@
 'use client'
-import { useEffect, useState } from "react";
-import { Button, Image, Input, Select, SelectItem } from "@heroui/react";
+import { useState } from "react";
+import { Button, Input, Select, SelectItem } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { ErrorEnum } from "@/static/error-enum";
-import { LogoBoxVertical } from "../molecules/logo-box-vertical";
+import { LogoBoxVertical } from "@/components/molecules/logo-box-vertical";
 import { useMutation } from "@tanstack/react-query";
 import { authApi } from "@/lib/api/auth";
 import { useRouter } from "next/navigation";

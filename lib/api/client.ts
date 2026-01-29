@@ -6,10 +6,13 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 /**
  * 공통 헤더 생성 (Access Token 자동 포함)
  */
-const getHeaders = (): HeadersInit => {
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-  };
+const getHeaders = (isFormData: boolean = false): HeadersInit => {
+  const headers: HeadersInit = {};
+
+  // FormData가 아닐 때만 Content-Type 설정 (FormData는 브라우저가 자동 설정)
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   const accessToken = getAccessToken();
   if (accessToken) {
@@ -58,22 +61,24 @@ export const apiClient = {
   },
 
   post: async <T>(endpoint: string, data?: any): Promise<T> => {
+    const isFormData = data instanceof FormData;
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
-      headers: getHeaders(),
+      headers: getHeaders(isFormData),
       credentials: 'include',
-      body: data ? JSON.stringify(data) : undefined,
+      body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
     });
 
     return handleResponse<T>(response);
   },
 
   put: async <T>(endpoint: string, data?: any): Promise<T> => {
+    const isFormData = data instanceof FormData;
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'PUT',
-      headers: getHeaders(),
+      headers: getHeaders(isFormData),
       credentials: 'include',
-      body: data ? JSON.stringify(data) : undefined,
+      body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
     });
 
     return handleResponse<T>(response);

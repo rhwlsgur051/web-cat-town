@@ -17,8 +17,9 @@ export interface FeedResponse {
     feed?: {
         feedNo: number;
         feedContent: string;
-        feedImageUrl?: string;
-        feedLikes: number;
+        feedImageUrl: string; // 필수
+        likeCount?: number;
+        isLiked?: boolean;
         createdAt: string;
         updatedAt: string;
         user: {
@@ -35,8 +36,9 @@ export interface FeedsListResponse {
     feeds: Array<{
         feedNo: number;
         feedContent: string;
-        feedImageUrl?: string;
-        feedLikes: number;
+        feedImageUrl: string; // 필수
+        likeCount?: number;
+        isLiked?: boolean;
         createdAt: string;
         user: {
             userNo: number;
@@ -50,8 +52,8 @@ export interface FeedsListResponse {
 }
 
 export const feedApi = {
-    // 피드 작성
-    createFeed: async (data: CreateFeedRequest): Promise<FeedResponse> => {
+    // 피드 작성 (FormData 지원)
+    createFeed: async (data: CreateFeedRequest | FormData): Promise<FeedResponse> => {
         return apiClient.post<FeedResponse>('/feeds', data);
     },
 
@@ -65,8 +67,8 @@ export const feedApi = {
         return apiClient.get<FeedResponse>(`/feeds/${feedNo}`);
     },
 
-    // 피드 수정
-    updateFeed: async (feedNo: number, data: UpdateFeedRequest): Promise<FeedResponse> => {
+    // 피드 수정 (FormData 지원)
+    updateFeed: async (feedNo: number, data: UpdateFeedRequest | FormData): Promise<FeedResponse> => {
         return apiClient.put<FeedResponse>(`/feeds/${feedNo}`, data);
     },
 
