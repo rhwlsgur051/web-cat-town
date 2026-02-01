@@ -5,6 +5,7 @@ import { ReduxProvider } from '@/providers/redux-provider';
 import { HeroUIProvider } from '@heroui/react';
 import { usePathname } from 'next/navigation';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Footer } from '@/components/molecules/footer';
 
 export function Providers({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -18,6 +19,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     <div id="body-container">
                         {children}
                     </div>
+                    {!hideHeader && <Footer />}
                 </HeroUIProvider>
             </ReduxProvider>
         </QueryClientProvider>

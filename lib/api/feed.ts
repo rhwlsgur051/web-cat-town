@@ -26,6 +26,7 @@ export interface FeedResponse {
             userNo: number;
             userId: string;
             userName: string;
+            userAvatarUrl?: string;
         };
     };
 }
@@ -44,6 +45,7 @@ export interface FeedsListResponse {
             userNo: number;
             userId: string;
             userName: string;
+            userAvatarUrl?: string;
         };
     }>;
     total: number;

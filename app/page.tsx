@@ -1,85 +1,84 @@
 'use client'
 
+import { useState, useEffect } from "react";
 import { PostCard } from "@/components/molecules/post-card";
-import { Button } from "@heroui/react";
+import { Button, Spinner } from "@heroui/react";
 import { useRouter } from "next/navigation";
-
-// 임시 데이터
-const MOCK_POSTS = [
-  {
-    id: 1,
-    author: {
-      name: "냥집사",
-      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d"
-    },
-    content: "우리 고양이가 오늘 처음으로 츄르를 먹었어요! 🐱\n너무 귀여운 모습이라 사진 찍었습니다 ㅎㅎ",
-    image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&h=400&fit=crop",
-    likes: 42,
-    comments: 8,
-    createdAt: "2시간 전"
-  },
-  {
-    id: 2,
-    author: {
-      name: "고양이사랑",
-      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d"
-    },
-    content: "오늘도 창가에서 햇빛 쬐는 우리 냥이 ☀️\n평화롭고 행복해 보여요~",
-    image: "https://images.unsplash.com/photo-1573865526739-10c1dd7013e8?w=600&h=400&fit=crop",
-    likes: 128,
-    comments: 15,
-    createdAt: "5시간 전"
-  },
-  {
-    id: 3,
-    author: {
-      name: "멍냥러버",
-      avatar: "https://i.pravatar.cc/150?u=a04258114e29026302d"
-    },
-    content: "고양이 간식 추천 받아요!\n우리 애가 입이 짧아서 잘 안먹더라구요 ㅠㅠ",
-    likes: 23,
-    comments: 31,
-    createdAt: "1일 전"
-  },
-  {
-    id: 4,
-    author: {
-      name: "캣타운주민",
-      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704f"
-    },
-    content: "새로 산 고양이 터널이 대박이에요!\n신나게 놀다가 지쳐서 잠든 모습 💤",
-    image: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=600&h=400&fit=crop",
-    likes: 89,
-    comments: 12,
-    createdAt: "1일 전"
-  },
-  {
-    id: 5,
-    author: {
-      name: "냥이집사",
-      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024f"
-    },
-    content: "고양이 병원 다녀왔어요.\n건강검진 결과 이상 없대요! 다행이다 😊",
-    likes: 67,
-    comments: 9,
-    createdAt: "2일 전"
-  },
-  {
-    id: 6,
-    author: {
-      name: "캣맘",
-      avatar: "https://i.pravatar.cc/150?u=a042581f4e29027007d"
-    },
-    content: "아기 고양이 입양했어요! 🎉\n이름은 뭐가 좋을까요? 추천 부탁드려요~",
-    image: "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=600&h=400&fit=crop",
-    likes: 156,
-    comments: 48,
-    createdAt: "3일 전"
-  }
-];
+import { feedApi } from "@/lib/api/feed";
+import { useAppSelector } from "@/stores/hooks";
 
 export default function Home() {
   const router = useRouter();
+  
+  const [feeds, setFeeds] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const limit = 10;
+
+  // 피드 목록 조회
+  const fetchFeeds = async (pageNum: number) => {
+    try {
+      setLoading(true);
+      const response = await feedApi.getFeeds(pageNum, limit);
+      
+      if (pageNum === 1) {
+        setFeeds(response.feeds);
+      } else {
+        setFeeds(prev => [...prev, ...response.feeds]);
+      }
+      
+      setTotal(response.total);
+      setHasMore(response.feeds.length === limit);
+    } catch (error) {
+      console.error('피드 목록 조회 실패:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 초기 로드
+  useEffect(() => {
+    fetchFeeds(1);
+  }, []);
+
+  // 더보기
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchFeeds(nextPage);
+  };
+
+  // 피드 삭제 핸들러
+  const handleDeleteFeed = (feedNo: number) => {
+    setFeeds(prev => prev.filter(feed => feed.feedNo !== feedNo));
+  };
+
+  // 시간 포맷팅
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (minutes < 1) return '방금 전';
+    if (minutes < 60) return `${minutes}분 전`;
+    if (hours < 24) return `${hours}시간 전`;
+    if (days < 7) return `${days}일 전`;
+    
+    return date.toLocaleDateString('ko-KR');
+  };
+
+  if (loading && page === 1) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center py-6 px-4">
@@ -97,18 +96,47 @@ export default function Home() {
       </div>
 
       {/* 게시글 목록 */}
-      <div className="w-full flex flex-col items-center gap-4">
-        {MOCK_POSTS.map((post) => (
-          <PostCard key={post.id} {...post} />
-        ))}
-      </div>
+      {feeds.length === 0 ? (
+        <div className="w-full max-w-[600px] text-center py-12">
+          <p className="text-gray-500">아직 작성된 피드가 없습니다.</p>
+          <p className="text-gray-400 text-sm mt-2">첫 번째 피드를 작성해보세요!</p>
+        </div>
+      ) : (
+        <div className="w-full flex flex-col items-center gap-4">
+          {feeds.map((feed) => (
+            <PostCard 
+              key={feed.feedNo}
+              id={feed.feedNo}
+              author={{
+                name: feed.user.userName,
+                avatar: feed.user.userAvatarUrl || '/user.png',
+                userNo: feed.user.userNo
+              }}
+              content={feed.feedContent}
+              image={feed.feedImageUrl}
+              likes={feed.likeCount || 0}
+              comments={0} // 댓글 기능은 아직 미구현
+              createdAt={formatDate(feed.createdAt)}
+              onDelete={handleDeleteFeed}
+            />
+          ))}
+        </div>
+      )}
 
       {/* 더보기 버튼 */}
-      <div className="mt-8">
-        <Button variant="bordered" size="lg">
-          더 보기
-        </Button>
-      </div>
+      {hasMore && feeds.length > 0 && (
+        <div className="mt-8">
+          <Button 
+            variant="bordered" 
+            size="lg"
+            onClick={handleLoadMore}
+            isLoading={loading && page > 1}
+            isDisabled={loading}
+          >
+            {loading && page > 1 ? '로딩 중...' : '더 보기'}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

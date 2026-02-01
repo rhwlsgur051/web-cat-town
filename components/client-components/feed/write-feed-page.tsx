@@ -30,7 +30,7 @@ export const WriteFeedPage = () => {
         mutationFn: feedApi.createFeed,
         onSuccess: () => {
             // 피드 작성 성공 시 메인 페이지로 이동
-            // router.push('/');
+            router.push('/');
         },
         onError: (error: any) => {
             console.error('피드 작성 실패:', error);
@@ -118,16 +118,16 @@ export const WriteFeedPage = () => {
                     </label>
                     
                     {imagePreview ? (
-                        <div className="relative w-full">
+                        <div className="relative w-full overflow-hidden rounded-lg" style={{ paddingBottom: '75%' }}>
                             <img 
                                 src={imagePreview} 
                                 alt="Preview" 
-                                className="w-full max-h-[400px] object-cover rounded-lg"
+                                className="absolute top-0 left-0 w-full h-full object-contain"
                             />
                             <Button 
                                 color="danger" 
                                 size="sm"
-                                className="absolute top-2 right-2"
+                                className="absolute top-2 right-2 z-10"
                                 onClick={handleRemoveImage}
                                 type="button"
                             >
