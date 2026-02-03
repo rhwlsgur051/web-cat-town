@@ -36,7 +36,7 @@ export interface AuthResponse {
 export const authApi = {
     // 회원가입
     join: async (data: JoinRequest): Promise<AuthResponse> => {
-        return apiClient.post<AuthResponse>('/users', data);
+        return apiClient.post<AuthResponse>('/auth/join', data);
     },
 
     // 로그인

@@ -26,6 +26,39 @@ export const MyPage = () => {
         router.push('/login');
     };
 
+    // 회원탈퇴 처리
+    const handleDeleteAccount = async () => {
+        if (!userInfo) return;
+
+        // 확인 메시지
+        const confirmMessage = '정말로 회원 탈퇴하시겠습니까?\n\n탈퇴 시 모든 데이터(프로필, 피드, 댓글 등)가 삭제되며 복구할 수 없습니다.';
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+
+        // 재확인
+        const reconfirm = confirm('정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');
+        if (!reconfirm) {
+            return;
+        }
+
+        try {
+            setLoading(true);
+            await userApi.deleteUser(userInfo.userNo);
+            
+            // 토큰 및 상태 초기화
+            clearTokens();
+            dispatch(clearUser());
+            
+            alert('회원 탈퇴가 완료되었습니다.');
+            router.push('/login');
+        } catch (error) {
+            console.error('회원 탈퇴 실패:', error);
+            alert('회원 탈퇴에 실패했습니다. 다시 시도해주세요.');
+            setLoading(false);
+        }
+    };
+
     // 사용자 정보 불러오기
     useEffect(() => {
         const fetchUserInfo = async () => {
@@ -190,23 +223,36 @@ export const MyPage = () => {
                                         inputWrapper: "cursor-default"
                                     }}
                                 />
-                                <Input
-                                    label="이메일"
-                                    value={userInfo.userEmail}
-                                    isReadOnly
-                                    variant="bordered"
-                                    classNames={{
-                                        input: "cursor-default",
-                                        inputWrapper: "cursor-default"
-                                    }}
-                                />
+                                <div className="relative">
+                                    <Input
+                                        label="이메일"
+                                        value={userInfo.userEmail}
+                                        isReadOnly
+                                        variant="bordered"
+                                        classNames={{
+                                            input: "cursor-default",
+                                            inputWrapper: "cursor-default"
+                                        }}
+                                    />
+                                    {/* 회원탈퇴 버튼 */}
+                                    <Button
+                                        size="sm"
+                                        color="danger"
+                                        variant="light"
+                                        onClick={handleDeleteAccount}
+                                        className="absolute right-0 -bottom-8 text-xs"
+                                        isDisabled={loading}
+                                    >
+                                        회원탈퇴
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </CardBody>
                 </Card>
 
                 {/* 추가 기능 버튼들 */}
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 mt-8">
                     <Button
                         color="default"
                         variant="bordered"

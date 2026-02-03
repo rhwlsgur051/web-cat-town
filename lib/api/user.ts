@@ -41,4 +41,9 @@ export const userApi = {
         formData.append('image', file);
         return apiClient.put<User>(`/users/${userNo}/image`, formData);
     },
+
+    // 회원 탈퇴
+    deleteUser: async (userNo: number): Promise<{ success: boolean; message: string }> => {
+        return apiClient.delete<{ success: boolean; message: string }>(`/users/${userNo}`);
+    },
 };

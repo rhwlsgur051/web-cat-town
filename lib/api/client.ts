@@ -1,7 +1,11 @@
 // lib/api/client.ts
-import { getAccessToken, clearTokens } from '@/lib/utils/token';
+import { getAccessToken, getRefreshToken, setAccessToken, clearTokens } from '@/lib/utils/token';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+// 토큰 갱신 중인지 추적하는 플래그
+let isRefreshing = false;
+let refreshPromise: Promise<string | null> | null = null;
 
 /**
  * 공통 헤더 생성 (Access Token 자동 포함)
@@ -23,19 +27,85 @@ const getHeaders = (isFormData: boolean = false): HeadersInit => {
 };
 
 /**
- * 공통 에러 처리
+ * Refresh Token으로 새 Access Token 발급
  */
-const handleResponse = async <T>(response: Response): Promise<T> => {
-  if (!response.ok) {
-    // 401 Unauthorized - 토큰 만료 또는 인증 실패
-    if (response.status === 401) {
+const refreshAccessToken = async (): Promise<string | null> => {
+  // 이미 갱신 중이면 기존 Promise 반환
+  if (isRefreshing && refreshPromise) {
+    return refreshPromise;
+  }
+
+  isRefreshing = true;
+  refreshPromise = (async () => {
+    try {
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) {
+        throw new Error('Refresh Token이 없습니다.');
+      }
+
+      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (!response.ok) {
+        throw new Error('토큰 갱신 실패');
+      }
+
+      const data = await response.json();
+      const newAccessToken = data.accessToken;
+
+      // 새 Access Token 저장
+      setAccessToken(newAccessToken);
+      return newAccessToken;
+    } catch (error) {
+      console.error('토큰 갱신 실패:', error);
+      
+      // 갱신 실패 시 모든 토큰 삭제
       clearTokens();
       
-      // Redux 상태도 초기화 (localStorage persist도 함께 삭제)
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('persist:root'); // redux-persist 초기화
-        
-        // 이미 로그인 페이지에 있으면 리다이렉트하지 않음
+        localStorage.removeItem('persist:root');
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/login';
+        }
+      }
+      
+      return null;
+    } finally {
+      isRefreshing = false;
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+};
+
+/**
+ * 공통 에러 처리
+ */
+const handleResponse = async <T>(response: Response, retryRequest?: () => Promise<Response>): Promise<T> => {
+  if (!response.ok) {
+    // 401 Unauthorized - 토큰 만료 또는 인증 실패
+    if (response.status === 401 && retryRequest) {
+      // Refresh Token으로 Access Token 갱신 시도
+      const newAccessToken = await refreshAccessToken();
+      
+      if (newAccessToken) {
+        // 새 토큰으로 원래 요청 재시도
+        const retryResponse = await retryRequest();
+        if (retryResponse.ok) {
+          return retryResponse.json();
+        }
+      }
+      
+      // 갱신 실패 또는 재시도 실패 시 로그인 페이지로
+      clearTokens();
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('persist:root');
         if (!window.location.pathname.includes('/login')) {
           window.location.href = '/login';
         }
@@ -51,46 +121,50 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 
 export const apiClient = {
   get: async <T>(endpoint: string): Promise<T> => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const makeRequest = () => fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'GET',
       headers: getHeaders(),
       credentials: 'include',
     });
 
-    return handleResponse<T>(response);
+    const response = await makeRequest();
+    return handleResponse<T>(response, makeRequest);
   },
 
   post: async <T>(endpoint: string, data?: any): Promise<T> => {
     const isFormData = data instanceof FormData;
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const makeRequest = () => fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: getHeaders(isFormData),
       credentials: 'include',
       body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
     });
 
-    return handleResponse<T>(response);
+    const response = await makeRequest();
+    return handleResponse<T>(response, makeRequest);
   },
 
   put: async <T>(endpoint: string, data?: any): Promise<T> => {
     const isFormData = data instanceof FormData;
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const makeRequest = () => fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'PUT',
       headers: getHeaders(isFormData),
       credentials: 'include',
       body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
     });
 
-    return handleResponse<T>(response);
+    const response = await makeRequest();
+    return handleResponse<T>(response, makeRequest);
   },
 
   delete: async <T>(endpoint: string): Promise<T> => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const makeRequest = () => fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'DELETE',
       headers: getHeaders(),
       credentials: 'include',
     });
 
-    return handleResponse<T>(response);
+    const response = await makeRequest();
+    return handleResponse<T>(response, makeRequest);
   },
 };
