@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Card, CardBody, CardFooter, CardHeader, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
 import { UserAvatar } from "@/components/client-components/atoms/user-avatar";
 import { useAppSelector } from "@/stores/hooks";
@@ -21,9 +21,10 @@ interface PostCardProps {
     onDelete?: (feedNo: number) => void;
 }
 
-export const PostCard = ({ id, author, content, image, likes, comments, createdAt, onDelete }: PostCardProps) => {
-    const currentUser = useAppSelector((state) => state.user);
-    const isMyPost = currentUser.userNo === author.userNo;
+export const PostCard = memo(({ id, author, content, image, likes, comments, createdAt, onDelete }: PostCardProps) => {
+    // userNo만 선택적으로 가져오기 (user 객체 전체 변경 시 리렌더링 방지)
+    const currentUserNo = useAppSelector((state) => state.user.userNo);
+    const isMyPost = currentUserNo === author.userNo;
     const [deleting, setDeleting] = useState(false);
 
     const handleDelete = async () => {
@@ -140,4 +141,6 @@ export const PostCard = ({ id, author, content, image, likes, comments, createdA
             </CardFooter>
         </Card>
     );
-};
+});
+
+PostCard.displayName = 'PostCard';

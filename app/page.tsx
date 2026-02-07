@@ -1,11 +1,10 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { PostCard } from "@/components/molecules/post-card";
 import { Button, Spinner } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { feedApi } from "@/lib/api/feed";
-import { useAppSelector } from "@/stores/hooks";
 
 export default function Home() {
   const router = useRouter();
@@ -43,20 +42,20 @@ export default function Home() {
     fetchFeeds(1);
   }, []);
 
-  // 더보기
-  const handleLoadMore = () => {
+  // 더보기 (useCallback으로 메모이제이션)
+  const handleLoadMore = useCallback(() => {
     const nextPage = page + 1;
     setPage(nextPage);
     fetchFeeds(nextPage);
-  };
+  }, [page]);
 
-  // 피드 삭제 핸들러
-  const handleDeleteFeed = (feedNo: number) => {
+  // 피드 삭제 핸들러 (useCallback으로 메모이제이션)
+  const handleDeleteFeed = useCallback((feedNo: number) => {
     setFeeds(prev => prev.filter(feed => feed.feedNo !== feedNo));
-  };
+  }, []);
 
-  // 시간 포맷팅
-  const formatDate = (dateString: string) => {
+  // 시간 포맷팅 (useCallback으로 메모이제이션하여 PostCard 리렌더링 방지)
+  const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -70,7 +69,7 @@ export default function Home() {
     if (days < 7) return `${days}일 전`;
     
     return date.toLocaleDateString('ko-KR');
-  };
+  }, []);
 
   if (loading && page === 1) {
     return (

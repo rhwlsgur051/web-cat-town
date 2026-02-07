@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button, Textarea } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -22,8 +22,10 @@ export const WriteFeedPage = () => {
 
     const content = watch('feedContent');
     
-    // 폼 유효성 검사: 내용 + 이미지 필수
-    const isFormValid = !!content && content.length >= 1 && content.length <= 1000 && !!imageFile;
+    // 폼 유효성 검사: 내용 + 이미지 필수 (useMemo로 최적화)
+    const isFormValid = useMemo(() => {
+        return !!content && content.length >= 1 && content.length <= 1000 && !!imageFile;
+    }, [content, imageFile]);
 
     // 피드 작성 Mutation
     const createFeedMutation = useMutation({
