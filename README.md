@@ -1,36 +1,177 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐱 CatLink
 
-## Getting Started
+> **고양이 집사를 위한 문제 해결형 커뮤니티 플랫폼**
+> 단순한 사진 공유 SNS가 아닌, 집사들이 실제로 겪는 문제를 질문·답변·경험 공유로 해결하는 커뮤니티를 목표로 합니다.
 
-First, run the development server:
+---
+
+## 1. 프로젝트 개요
+
+CatLink는 고양이 집사들이 **건강, 행동, 사료, 생활 환경** 등과 관련된 고민을 빠르게 공유하고 해결할 수 있도록 설계된 커뮤니티형 웹 서비스입니다.
+
+기존 SNS가 ‘자랑’과 ‘소비’에 집중되어 있다면, CatLink는 **문제 해결 과정 자체에 가치를 두는 구조**를 지향합니다.
+
+또한 커뮤니티에서 자연스럽게 발생하는 데이터를 기반으로, 향후 **콘텐츠 추천 · 상품 연동 · 전문가 연결**까지 확장 가능한 구조를 고려해 설계되었습니다.
+
+---
+
+## 2. 문제 인식
+
+* 고양이 집사들은 실제로는 **질문과 정보 교류**를 위해 커뮤니티를 사용함
+* 하지만 현재 한국에서는
+
+  * 인스타그램 → 자랑 중심, 정보 축적 어려움
+  * 네이버 카페 → 플랫폼 제약, 서비스 확장 불가
+
+👉 **집사 소통에 최적화된 전용 플랫폼의 부재**
+
+---
+
+## 3. 핵심 컨셉
+
+* 질문/답변 중심 커뮤니티
+* 태그 기반 정보 구조화
+* 공감과 경험 공유를 중심으로 한 UX
+* 향후 사업 확장을 고려한 데이터 설계
+
+---
+
+## 4. 주요 기능
+
+### 🗨️ 질문 & 답변
+
+* 집사들이 겪는 실제 문제를 질문 형태로 등록
+* 댓글 기반 답변 및 경험 공유
+* 채택/공감 기능을 통한 신뢰도 형성
+
+### 🏷️ 태그 시스템
+
+* 증상 / 연령 / 사료 / 행동 등 태그 분류
+* 유사 질문 탐색 및 정보 축적
+
+### 📌 북마크 & 공감
+
+* 유용한 질문/답변 저장
+* 단순 좋아요가 아닌 ‘공감’ 중심 반응
+
+### 🔍 탐색 & 필터
+
+* 태그 기반 질문 탐색
+* 댓글 수 / 최신순 / 공감순 정렬
+
+---
+
+## 5. 기술 스택
+
+### Frontend
+
+* Next.js (App Router)
+* TypeScript
+* Server Components / Client Components 분리 설계
+
+### Backend
+
+* NestJS
+* Prisma ORM
+* REST API
+
+### Database
+
+* PostgreSQL
+
+---
+
+## 6. Cursor AI 활용 전략
+
+이 프로젝트에서 Cursor AI는 단순한 코드 자동 생성 도구가 아니라, **설계와 의사결정을 돕는 개발 파트너**로 활용되었습니다.
+
+### 1️⃣ 기획 단계
+
+* 추상적인 서비스 아이디어를 기능 단위로 분해
+* MVP 범위 정의 및 우선순위 설정
+
+> Cursor AI를 활용해 아이디어를 실제 구현 가능한 기능 단위로 구조화했습니다.
+
+### 2️⃣ 데이터 모델링
+
+* 질문 중심 커뮤니티에 맞는 DB 구조 설계
+* 태그, 반응, 로그 기반 확장성 고려
+
+> 초기 단계부터 추천 및 수익화 확장을 고려한 데이터 구조를 설계했습니다.
+
+### 3️⃣ 프론트엔드 구조 설계
+
+* Next.js App Router 환경에서 서버/클라이언트 컴포넌트 역할 분리
+* 상태 흐름 및 UX 단순화
+
+> Cursor AI를 활용해 렌더링 전략과 컴포넌트 책임을 명확히 분리했습니다.
+
+### 4️⃣ 리팩토링 & 코드 품질
+
+* 기능 추가 후 복잡도 증가 구간 점검
+* 책임 분리 및 유지보수성 개선
+
+> 코드 품질을 유지하기 위해 Cursor AI를 활용한 반복적인 리팩토링을 수행했습니다.
+
+---
+
+## 7. UX 설계 포인트
+
+* 질문 중심 메인 피드
+* 자극적인 인기 콘텐츠 대신, ‘지금 필요한 정보’ 우선 노출
+* 광고/상품 노출을 고려하되, 문제 해결 흐름을 방해하지 않는 구조
+
+---
+
+## 8. 사업 확장 가능성
+
+CatLink는 커뮤니티 자체를 목적으로 하지 않고, **문제 해결 과정에서 자연스럽게 확장**되는 구조를 지향합니다.
+
+* 태그 기반 관련 상품 추천
+* 전문가(수의사, 행동 교정) Q&A
+* 집사 경험 데이터 기반 콘텐츠 큐레이션
+* 커뮤니티 추천 마켓
+
+> 본 프로젝트는 개인 포트폴리오를 넘어, 실제 서비스 운영과 사업 확장을 고려한 구조로 설계되었습니다.
+
+---
+
+## 9. 프로젝트를 통해 얻은 것
+
+* 커뮤니티 서비스의 UX 설계 경험
+* 데이터 구조와 비즈니스 모델의 연결
+* AI 도구를 활용한 실전 개발 프로세스
+
+---
+
+## 10. 향후 계획
+
+* 추천 알고리즘 고도화
+* 지역 기반 집사 소통 기능
+* 전문가 인증 시스템 도입
+
+---
+
+## 11. 실행 방법
 
 ```bash
+# frontend
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# backend
+npm install
+npm run start:dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 12. 한 줄 요약
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+> **CatLink는 고양이 집사들의 문제 해결을 중심으로 설계된 커뮤니티형 플랫폼이며, 기술적 완성도와 사업 확장 가능성을 함께 고려한 프로젝트입니다.**
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the GNU AGPL v3.
+See the LICENSE file for details.

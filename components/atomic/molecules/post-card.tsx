@@ -2,7 +2,7 @@
 
 import { useState, memo } from "react";
 import { Card, CardBody, CardFooter, CardHeader, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
-import { UserAvatar } from "@/components/client-components/atoms/user-avatar";
+import { UserAvatar } from "@/components/atomic/atoms/user-avatar";
 import { useAppSelector } from "@/stores/hooks";
 import { feedApi } from "@/lib/api/feed";
 
@@ -35,7 +35,6 @@ export const PostCard = memo(({ id, author, content, image, likes, comments, cre
         try {
             setDeleting(true);
             await feedApi.deleteFeed(id);
-            alert('피드가 삭제되었습니다.');
             if (onDelete) {
                 onDelete(id);
             }
@@ -48,7 +47,7 @@ export const PostCard = memo(({ id, author, content, image, likes, comments, cre
     };
 
     return (
-        <Card className="w-full max-w-[600px] shadow-sm">
+        <Card className="w-full shadow-sm">
             {/* 작성자 정보 */}
             <CardHeader className="flex gap-3 justify-between">
                 <div className="flex gap-3">
@@ -100,17 +99,15 @@ export const PostCard = memo(({ id, author, content, image, likes, comments, cre
             </CardBody>
 
             {/* 이미지 */}
-            {image && (
-                <div className="px-3 py-2">
-                    <div className="relative w-full overflow-hidden rounded-lg bg-gray-100 pb-[75%]">
-                        <img
-                            alt="게시글 이미지"
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full object-contain rounded-lg"
-                            src={image}
-                        />
-                    </div>
+            <div className="px-3 py-2">
+                <div className="relative w-full overflow-hidden rounded-lg">
+                    <img
+                        alt="게시글 이미지"
+                        className="object-contain w-full h-full object-center"
+                        src={image}
+                    />
                 </div>
-            )}
+            </div>
 
             {/* 좋아요/댓글 */}
             <CardFooter className="gap-3 px-4 py-3">

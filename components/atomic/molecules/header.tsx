@@ -2,35 +2,41 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LogoBoxHorizontal } from "./logo-box-horizontal"
-import { UserAvatar } from "../client-components/atoms/user-avatar"
+import { UserAvatar } from "../atoms/user-avatar"
 import { useAppSelector } from "@/stores/hooks"
 import { useRouter } from "next/navigation"
-import { Button } from "@heroui/react"
 import { memo } from "react"
 
 // 네비게이션 링크를 별도 컴포넌트로 분리 (pathname 변경 시 이 부분만 리렌더링)
 const Navigation = memo(() => {
     const pathname = usePathname();
-    
+
     return (
         <nav className="flex items-center gap-8">
-            <Link 
-                href="/" 
-                className={`text-base font-semibold transition-colors ${
-                    pathname === '/' 
-                        ? 'text-amber-900 border-b-2 border-amber-900' 
-                        : 'text-amber-700 hover:text-amber-900'
-                }`}
+            <Link
+                href="/"
+                className={`text-base font-semibold transition-colors ${pathname === '/'
+                    ? 'text-amber-900 border-b-2 border-amber-900'
+                    : 'text-amber-700 hover:text-amber-900'
+                    }`}
             >
-                피드
+                일상
             </Link>
-            <Link 
-                href="/shopping" 
-                className={`text-base font-semibold transition-colors ${
-                    pathname === '/shopping' 
-                        ? 'text-amber-900 border-b-2 border-amber-900' 
-                        : 'text-amber-700 hover:text-amber-900'
-                }`}
+            <Link
+                href="/health"
+                className={`text-base font-semibold transition-colors ${pathname === '/health'
+                    ? 'text-amber-900 border-b-2 border-amber-900'
+                    : 'text-amber-700 hover:text-amber-900'
+                    }`}
+            >
+                건강
+            </Link>
+            <Link
+                href="/shopping"
+                className={`text-base font-semibold transition-colors ${pathname === '/shopping'
+                    ? 'text-amber-900 border-b-2 border-amber-900'
+                    : 'text-amber-700 hover:text-amber-900'
+                    }`}
             >
                 쇼핑
             </Link>
@@ -56,22 +62,18 @@ const UserSection = memo(() => {
             {isLoggedIn ? (
                 // 로그인 상태
                 <>
-                    <div className="flex items-center gap-2">
-                        <UserAvatar
-                            src={userAvatarUrl || '/user.png'}
-                            name={userName || ''}
-                            size="sm"
-                        />
-                        <span className="text-sm font-semibold">{userName}님</span>
-                    </div>
-                    <Button
-                        size="sm"
-                        variant="flat"
-                        color="primary"
+                    <button
+                        className="cursor-pointer"
                         onClick={() => router.push('/my-page')}
                     >
-                        마이페이지
-                    </Button>
+                        <div className="flex items-center gap-2">
+                            <UserAvatar
+                                src={userAvatarUrl || '/user.png'}
+                                name={userName || ''}
+                                size="sm"
+                            />
+                        </div>
+                    </button>
                 </>
             ) : (
                 // 비로그인 상태
@@ -88,18 +90,16 @@ UserSection.displayName = 'UserSection';
 
 export const Header = () => {
     return (
-        <header className="sticky top-0 h-[80px] bg-amber-200 flex items-center justify-center px-4 z-50 border-b-1 border-b-amber-300">
+        <header className="sticky top-0 h-[80px] w-full rounded-t-2xl bg-white flex items-center justify-center px-4 z-50 border-b-1 border-b-slate-100">
             <div className="w-full max-w-[1200px] flex items-center justify-between">
-                {/* 로고 */}
-                <div>
-                    <Link href="/">
-                        <LogoBoxHorizontal />
-                    </Link>
+                <div className="flex items-center gap-20">
+                    {/* 로고 */}
+                    <LogoBoxHorizontal />
+
+                    {/* 중앙 메뉴 */}
+                    <Navigation />
+
                 </div>
-
-                {/* 중앙 메뉴 */}
-                <Navigation />
-
                 {/* 우측 사용자 영역 */}
                 <UserSection />
             </div>

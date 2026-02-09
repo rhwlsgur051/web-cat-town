@@ -1,4 +1,4 @@
-import { MyPage } from "@/components/client-components/my-page/my-page";
+import { MyPage } from "@/components/client-components/pages/my-page/my-page";
 
 export default function MyPageRoute() {
     return <MyPage />;

@@ -4,7 +4,7 @@ import { Button, Input } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { useAppDispatch } from "@/stores/hooks";
 import Link from "next/link";
-import { LogoBoxVertical } from "../../molecules/logo-box-vertical";
+import { LogoBoxVertical } from "../../../atomic/molecules/logo-box-vertical";
 import { useMutation } from "@tanstack/react-query";
 import { authApi, LoginRequest } from "@/lib/api/auth";
 import { useRouter } from "next/navigation";

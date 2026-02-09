@@ -7,6 +7,7 @@ import { clearUser, updateUserAvatar } from '@/stores/user-slice';
 import { clearTokens } from '@/lib/utils/token';
 import { userApi, User } from '@/lib/api/user';
 import { useRouter } from 'next/navigation';
+import { feedApi, FeedResponse } from '@/lib/api/feed';
 
 export const MyPage = () => {
     const router = useRouter();
@@ -19,6 +20,8 @@ export const MyPage = () => {
     const [uploading, setUploading] = useState(false);
     const [avatarPreview, setAvatarPreview] = useState<string>('/user.png');
 
+    const [myFeeds, setMyFeeds] = useState<Omit<FeedResponse, 'success' | 'message'>[]>([]);
+
     // 로그아웃 처리
     const handleLogout = () => {
         clearTokens(); // 토큰 삭제
@@ -26,60 +29,61 @@ export const MyPage = () => {
         router.push('/login');
     };
 
+    // 내 피드 목록 조회
+    const getMyFeeds = () => {
+        feedApi.getMyFeeds().then((res) => {
+            setMyFeeds(res.feeds);
+        })
+    }
+
     // 회원탈퇴 처리
     const handleDeleteAccount = async () => {
         if (!userInfo) return;
 
         // 확인 메시지
         const confirmMessage = '정말로 회원 탈퇴하시겠습니까?\n\n탈퇴 시 모든 데이터(프로필, 피드, 댓글 등)가 삭제되며 복구할 수 없습니다.';
-        if (!confirm(confirmMessage)) {
-            return;
-        }
+        const reconfirmMessage = '정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.';
+        if (confirm(confirmMessage) && confirm(reconfirmMessage)) {
+            try {
+                setLoading(true);
+                await userApi.deleteUser(userInfo.userNo);
 
-        // 재확인
-        const reconfirm = confirm('정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.');
-        if (!reconfirm) {
+                // 토큰 및 상태 초기화
+                clearTokens();
+                dispatch(clearUser());
+
+                alert('회원 탈퇴가 완료되었습니다.');
+                router.push('/login');
+            } catch (error) {
+                console.error('회원 탈퇴 실패:', error);
+                alert('회원 탈퇴에 실패했습니다. 다시 시도해주세요.');
+                setLoading(false);
+            }
+        }
+    };
+
+    const fetchUserInfo = async () => {
+        if (!user.userNo) {
+            router.push('/login');
             return;
         }
 
         try {
-            setLoading(true);
-            await userApi.deleteUser(userInfo.userNo);
-            
-            // 토큰 및 상태 초기화
-            clearTokens();
-            dispatch(clearUser());
-            
-            alert('회원 탈퇴가 완료되었습니다.');
-            router.push('/login');
+            const data = await userApi.getUser(user.userNo);
+            setUserInfo(data);
+            if (data.userAvatarUrl) {
+                setAvatarPreview(data.userAvatarUrl);
+            }
         } catch (error) {
-            console.error('회원 탈퇴 실패:', error);
-            alert('회원 탈퇴에 실패했습니다. 다시 시도해주세요.');
+            console.error('사용자 정보 조회 실패:', error);
+        } finally {
             setLoading(false);
+            getMyFeeds();
         }
     };
 
     // 사용자 정보 불러오기
     useEffect(() => {
-        const fetchUserInfo = async () => {
-            if (!user.userNo) {
-                router.push('/login');
-                return;
-            }
-
-            try {
-                const data = await userApi.getUser(user.userNo);
-                setUserInfo(data);
-                if (data.userAvatarUrl) {
-                    setAvatarPreview(data.userAvatarUrl);
-                }
-            } catch (error) {
-                console.error('사용자 정보 조회 실패:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         if (user.userId) {
             fetchUserInfo();
         } else {
@@ -124,10 +128,10 @@ export const MyPage = () => {
             if (userInfo) {
                 const updatedUser = await userApi.uploadAvatar(userInfo.userNo, file);
                 setUserInfo(updatedUser);
-                
+
                 // Redux 상태 업데이트 (헤더 이미지 즉시 반영)
                 dispatch(updateUserAvatar(updatedUser.userAvatarUrl || null));
-                
+
                 alert('프로필 이미지가 변경되었습니다.');
             }
         } catch (error) {

@@ -1,14 +1,17 @@
 'use client'
 
 import { useState, useEffect, useCallback } from "react";
-import { PostCard } from "@/components/molecules/post-card";
+import { PostCard } from "@/components/atomic/molecules/post-card";
 import { Button, Spinner } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { feedApi } from "@/lib/api/feed";
+import { CreateFeed } from "@/components/atomic/organisms/create-feed";
+import { FeedList } from "@/components/client-components/pages/feeds/feed-list";
+import { FeedTopic } from "@/components/client-components/pages/feeds/feed-topic";
 
 export default function Home() {
   const router = useRouter();
-  
+
   const [feeds, setFeeds] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -16,18 +19,20 @@ export default function Home() {
   const [hasMore, setHasMore] = useState(true);
   const limit = 10;
 
+  const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
+
   // 피드 목록 조회
   const fetchFeeds = async (pageNum: number) => {
     try {
       setLoading(true);
       const response = await feedApi.getFeeds(pageNum, limit);
-      
+
       if (pageNum === 1) {
         setFeeds(response.feeds);
       } else {
         setFeeds(prev => [...prev, ...response.feeds]);
       }
-      
+
       setTotal(response.total);
       setHasMore(response.feeds.length === limit);
     } catch (error) {
@@ -67,7 +72,7 @@ export default function Home() {
     if (minutes < 60) return `${minutes}분 전`;
     if (hours < 24) return `${hours}시간 전`;
     if (days < 7) return `${days}일 전`;
-    
+
     return date.toLocaleDateString('ko-KR');
   }, []);
 
@@ -80,62 +85,13 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center py-6 px-4">
-      {/* 헤더 영역 */}
-      <div className="w-full max-w-[600px] mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">피드</h1>
-          <Button color="primary" size="sm" onClick={() => router.push('/write')}>
-            글쓰기
-          </Button>
-        </div>
-        <p className="text-default-500 text-sm">
-          집사들의 일상을 공유해보세요 🐱
-        </p>
+    <div className="grid grid-cols-4">
+      <div className="col-span-3">
+        <FeedList />
       </div>
-
-      {/* 게시글 목록 */}
-      {feeds.length === 0 ? (
-        <div className="w-full max-w-[600px] text-center py-12">
-          <p className="text-gray-500">아직 작성된 피드가 없습니다.</p>
-          <p className="text-gray-400 text-sm mt-2">첫 번째 피드를 작성해보세요!</p>
-        </div>
-      ) : (
-        <div className="w-full flex flex-col items-center gap-4">
-          {feeds.map((feed) => (
-            <PostCard 
-              key={feed.feedNo}
-              id={feed.feedNo}
-              author={{
-                name: feed.user.userName,
-                avatar: feed.user.userAvatarUrl || '/user.png',
-                userNo: feed.user.userNo
-              }}
-              content={feed.feedContent}
-              image={feed.feedImageUrl}
-              likes={feed.likeCount || 0}
-              comments={0} // 댓글 기능은 아직 미구현
-              createdAt={formatDate(feed.createdAt)}
-              onDelete={handleDeleteFeed}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* 더보기 버튼 */}
-      {hasMore && feeds.length > 0 && (
-        <div className="mt-8">
-          <Button 
-            variant="bordered" 
-            size="lg"
-            onClick={handleLoadMore}
-            isLoading={loading && page > 1}
-            isDisabled={loading}
-          >
-            {loading && page > 1 ? '로딩 중...' : '더 보기'}
-          </Button>
-        </div>
-      )}
+      <div className="col-span-1">
+        <FeedTopic />
+      </div>
     </div>
   );
 }

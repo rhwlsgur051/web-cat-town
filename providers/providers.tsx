@@ -1,26 +1,29 @@
 'use client';
 
-import { Header } from '@/components/molecules/header';
+import { Header } from '@/components/atomic/molecules/header';
 import { ReduxProvider } from '@/providers/redux-provider';
 import { HeroUIProvider } from '@heroui/react';
 import { usePathname } from 'next/navigation';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Footer } from '@/components/molecules/footer';
+import { Footer } from '@/components/atomic/molecules/footer';
 import { useState, memo } from 'react';
 
 // Header/Footer 로직을 별도 컴포넌트로 분리하여 Provider 리렌더링 방지
 const ConditionalLayout = memo(({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
     const hideHeader = pathname === '/login' || pathname === '/join';
-    
+
     return (
-        <>
-            {!hideHeader && <Header />}
-            <div id="body-container">
-                {children}
+        <div>
+            <div className="max-w-[1100px] mx-auto bg-white my-8 rounded-2xl">
+                {!hideHeader && <Header />}
+                <div className="bg-slate-200 rounded-b-2xl">
+                    {children}
+                </div>
             </div>
+            <div id="modal-root" />
             {!hideHeader && <Footer />}
-        </>
+        </div>
     );
 });
 
@@ -37,7 +40,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             },
         },
     }));
-    
+
     return (
         <QueryClientProvider client={queryClient}>
             <ReduxProvider>
