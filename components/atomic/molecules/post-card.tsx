@@ -16,16 +16,20 @@ interface PostCardProps {
     content: string;
     image?: string;
     likes: number;
+    /** 현재 사용자가 이 피드에 좋아요를 눌렀는지 */
+    isLiked?: boolean;
     comments: number;
     createdAt: string;
     onDelete?: (feedNo: number) => void;
+    /** 좋아요 토글 후 부모 목록 갱신용 (feedNo, liked) */
+    onLikeToggled?: (feedNo: number, liked: boolean) => void;
 }
 
-export const PostCard = memo(({ id, author, content, image, likes, comments, createdAt, onDelete }: PostCardProps) => {
-    // userNo만 선택적으로 가져오기 (user 객체 전체 변경 시 리렌더링 방지)
+export const PostCard = memo(({ id, author, content, image, likes, isLiked = false, comments, createdAt, onDelete, onLikeToggled }: PostCardProps) => {
     const currentUserNo = useAppSelector((state) => state.user.userNo);
     const isMyPost = currentUserNo === author.userNo;
     const [deleting, setDeleting] = useState(false);
+    const [liking, setLiking] = useState(false);
 
     const handleDelete = async () => {
         if (!confirm('정말 이 피드를 삭제하시겠습니까?')) {
@@ -43,6 +47,20 @@ export const PostCard = memo(({ id, author, content, image, likes, comments, cre
             alert('피드 삭제에 실패했습니다.');
         } finally {
             setDeleting(false);
+        }
+    };
+
+    const handleLikeClick = async () => {
+        if (liking) return;
+        try {
+            setLiking(true);
+            const res = await feedApi.toggleLike(id);
+            onLikeToggled?.(id, res.liked);
+        } catch (error) {
+            console.error('좋아요 토글 실패:', error);
+            alert('좋아요 처리에 실패했습니다.');
+        } finally {
+            setLiking(false);
         }
     };
 
@@ -115,10 +133,18 @@ export const PostCard = memo(({ id, author, content, image, likes, comments, cre
                     <Button
                         size="sm"
                         variant="light"
+                        isDisabled={liking}
+                        onPress={handleLikeClick}
                         startContent={
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
+                            isLiked ? (
+                                <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                            ) : (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                            )
                         }
                     >
                         좋아요 {likes}

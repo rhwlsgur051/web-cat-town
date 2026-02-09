@@ -49,6 +49,14 @@ export const FeedList = () => {
         setFeeds(prev => prev.filter(feed => feed.feedNo !== feedNo));
     }, []);
 
+    // 좋아요 토글 후 목록 상태 반영
+    const handleLikeToggled = useCallback((feedNo: number, liked: boolean) => {
+        setFeeds(prev => prev.map(f => f.feedNo === feedNo
+            ? { ...f, isLiked: liked, likeCount: (f.likeCount ?? 0) + (liked ? 1 : -1) }
+            : f
+        ));
+    }, []);
+
     // 피드 생성 핸들러
     const handleFeedCreated = useCallback((newFeed: any) => {
         setFeeds(prev => [newFeed, ...prev]);
@@ -104,10 +112,12 @@ export const FeedList = () => {
                                 }}
                                 content={feed.feedContent}
                                 image={feed.feedImageUrl}
-                                likes={feed.likeCount || 0}
-                                comments={0} // 댓글 기능은 아직 미구현
+                                likes={feed.likeCount ?? 0}
+                                isLiked={feed.isLiked ?? false}
+                                comments={0}
                                 createdAt={formatDate(feed.createdAt)}
                                 onDelete={handleDeleteFeed}
+                                onLikeToggled={handleLikeToggled}
                             />
                         ))}
                     </Masonry>

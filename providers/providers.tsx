@@ -17,7 +17,7 @@ const ConditionalLayout = memo(({ children }: { children: React.ReactNode }) => 
         <div>
             <div className="max-w-[1100px] mx-auto bg-white my-8 rounded-2xl">
                 {!hideHeader && <Header />}
-                <div className="bg-slate-200 rounded-b-2xl">
+                <div className="bg-[#ffe1c2] rounded-b-2xl">
                     {children}
                 </div>
             </div>

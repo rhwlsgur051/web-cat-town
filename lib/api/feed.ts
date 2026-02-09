@@ -75,9 +75,9 @@ export const feedApi = {
         return apiClient.delete<void>(`${url}/${feedNo}`);
     },
 
-    // 피드 좋아요
-    likeFeed: async (feedNo: number): Promise<FeedResponse> => {
-        return apiClient.post<FeedResponse>(`${url}/${feedNo}/like`);
+    /** 좋아요 토글 (누르면 좋아요, 다시 누르면 취소). 응답 liked로 현재 상태 반환 */
+    toggleLike: async (feedNo: number): Promise<{ success: boolean; message: string; liked: boolean }> => {
+        return apiClient.post<{ success: boolean; message: string; liked: boolean }>(`${url}/${feedNo}/like`);
     },
 
     // 내가 작성한 피드 목록

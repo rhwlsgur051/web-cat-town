@@ -84,6 +84,17 @@ const refreshAccessToken = async (): Promise<string | null> => {
   return refreshPromise;
 };
 
+/** 토큰 정리 후 로그인 페이지로 이동 (401 시 공통) */
+const redirectToLogin = () => {
+  clearTokens();
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('persist:root');
+    if (!window.location.pathname.includes('/login')) {
+      window.location.href = '/login';
+    }
+  }
+};
+
 /**
  * 공통 에러 처리
  */
@@ -102,14 +113,12 @@ const handleResponse = async <T>(response: Response, retryRequest?: () => Promis
         }
       }
       
-      // 갱신 실패 또는 재시도 실패 시 로그인 페이지로
-      clearTokens();
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('persist:root');
-        if (!window.location.pathname.includes('/login')) {
-          window.location.href = '/login';
-        }
-      }
+      redirectToLogin();
+    }
+
+    // 401인데 위에서 리다이렉트 안 했으면 여기서 로그인으로 (retry 없거나 재시도 실패 등)
+    if (response.status === 401) {
+      redirectToLogin();
     }
 
     const error = await response.json().catch(() => ({}));

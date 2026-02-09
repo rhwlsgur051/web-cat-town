@@ -10,7 +10,7 @@ export const FeedTopic = () => {
                         <div className="text-gray-500">127</div>
                     </div>
                     <div className="flex justify-between">
-                        <div>🔥 집 앞 길냥이 새끼 있어요.</div>
+                        <div>🔥 집 앞에 길냥이가 있어요.</div>
                         <div className="text-gray-500">70</div>
                     </div>
                     <div className="flex justify-between">
