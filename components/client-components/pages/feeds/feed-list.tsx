@@ -1,6 +1,6 @@
 import Masonry from 'react-masonry-css';
 import { useState, useEffect, useCallback } from "react";
-import { PostCard } from "@/components/atomic/molecules/post-card";
+import { FeedItem } from "@/components/atomic/molecules/feed-item";
 import { Button, Spinner } from "@heroui/react";
 import { feedApi } from "@/lib/api/feed";
 import { CreateFeed } from "@/components/atomic/organisms/create-feed";
@@ -24,7 +24,7 @@ export const FeedList = () => {
                 setFeeds(prev => [...prev, ...response.feeds]);
             }
 
-            setHasMore(response.feeds.length === limit);
+            setHasMore(response.hasMore);
         } catch (error) {
             console.error('피드 목록 조회 실패:', error);
         } finally {
@@ -60,7 +60,7 @@ export const FeedList = () => {
     // 피드 생성 핸들러
     const handleFeedCreated = useCallback((newFeed: any) => {
         setFeeds(prev => [newFeed, ...prev]);
-      }, []);
+    }, []);
 
     // 시간 포맷팅 (useCallback으로 메모이제이션하여 PostCard 리렌더링 방지)
     const formatDate = useCallback((dateString: string) => {
@@ -88,45 +88,44 @@ export const FeedList = () => {
     }
 
     return (
-        <div className="w-full min-h-screen flex flex-col items-center py-6 px-4 gap-4">
+        <div className="min-h-screen flex flex-col">
             {/* 피드 생성 모달 */}
-            <CreateFeed onCreatedFeed={handleFeedCreated} />
+            <div className="mt-4 mb-16 mx-auto">
+                <CreateFeed onCreatedFeed={handleFeedCreated} />
+            </div>
 
             {/* 피드 목록 */}
-            {feeds.length === 0 ? (
-                <div className="w-full max-w-[600px] text-center py-12">
-                    <p className="text-gray-500">아직 작성된 피드가 없습니다.</p>
-                    <p className="text-gray-400 text-sm mt-2">첫 번째 피드를 작성해보세요!</p>
-                </div>
-            ) : (
-                <div className="w-full grid">
-                    <Masonry breakpointCols={{ default: 2, 640: 1 }} className="flex w-full my-masonry-grid" columnClassName="my-masonry-grid_column bg-clip-padding">
-                        {feeds.map((feed) => (
-                            <PostCard
-                                key={feed.feedNo}
-                                id={feed.feedNo}
-                                author={{
-                                    name: feed.user.userName,
-                                    avatar: feed.user.userAvatarUrl || '/user.png',
-                                    userNo: feed.user.userNo
-                                }}
-                                content={feed.feedContent}
-                                image={feed.feedImageUrl}
-                                likes={feed.likeCount ?? 0}
-                                isLiked={feed.isLiked ?? false}
-                                comments={0}
-                                createdAt={formatDate(feed.createdAt)}
-                                onDelete={handleDeleteFeed}
-                                onLikeToggled={handleLikeToggled}
-                            />
-                        ))}
-                    </Masonry>
-                </div>
-            )}
+            <div className='flex flex-col items-center gap-8'>
+                {feeds.length === 0 ? (
+                    <div className="text-center py-12">
+                        <p className="text-gray-500">아직 작성된 피드가 없습니다.</p>
+                        <p className="text-gray-400 text-sm mt-2">첫 번째 피드를 작성해보세요!</p>
+                    </div>
+                ) : (feeds.map((feed) => (
+                    <FeedItem
+                        key={feed.feedNo}
+                        id={feed.feedNo}
+                        author={{
+                            name: feed.user.userName,
+                            avatar: feed.user.userAvatarUrl || '/user.png',
+                            userNo: feed.user.userNo
+                        }}
+                        content={feed.feedContent}
+                        image={feed.feedImageUrl}
+                        likes={feed.likeCount ?? 0}
+                        isLiked={feed.isLiked ?? false}
+                        comments={0}
+                        createdAt={formatDate(feed.createdAt)}
+                        onDelete={handleDeleteFeed}
+                        onLikeToggled={handleLikeToggled}
+                    />
+                ))
+                )}
+            </div>
 
             {/* 더보기 버튼 */}
             {hasMore && feeds.length > 0 && (
-                <div className="mt-8">
+                <div className="mt-8 self-center">
                     <Button
                         variant="bordered"
                         size="lg"

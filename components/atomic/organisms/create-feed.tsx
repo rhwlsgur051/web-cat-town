@@ -5,7 +5,6 @@ import { useForm, Controller } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { feedApi, CreateFeedRequest } from "@/lib/api/feed";
 import ModalContainer from "@/components/client-components/modals/modal-container";
-import { WhiteBox } from "../atoms/white-box";
 
 export const CreateFeed = ({ onCreatedFeed }: { onCreatedFeed: (feed: any) => void }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,7 +24,7 @@ export const CreateFeed = ({ onCreatedFeed }: { onCreatedFeed: (feed: any) => vo
     // 피드 작성 Mutation
     const createFeedMutation = useMutation({
         mutationFn: feedApi.createFeed,
-        onSuccess: ({feed}) => {
+        onSuccess: ({ feed }) => {
             // 피드 작성 성공 시 모달 종료
             onCreatedFeed(feed);
             onClose();
@@ -80,9 +79,12 @@ export const CreateFeed = ({ onCreatedFeed }: { onCreatedFeed: (feed: any) => vo
     }
 
     return <>
-        <WhiteBox title="🐱 오늘 고양이와 무슨일이 있었나요?">
+        <div>
+            <div className="text-lg font-bold mb-2">
+                🐱 오늘 고양이와 무슨일이 있었나요?
+            </div>
             <Button color="primary" onPress={() => setIsModalOpen(true)}>집사들의 일상을 공유해보세요</Button>
-        </WhiteBox>
+        </div>
         <ModalContainer open={isModalOpen} onClose={onClose}>
             <form className={`w-full flex flex-col gap-4 items-center px-4`} onSubmit={handleSubmit(onSubmit)}>
                 {/* 헤더 */}

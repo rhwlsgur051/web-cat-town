@@ -90,8 +90,8 @@ UserSection.displayName = 'UserSection';
 
 export const Header = () => {
     return (
-        <header className="sticky top-0 h-[80px] w-full rounded-t-2xl bg-white flex items-center justify-center px-4 z-50 border-b-1 border-b-slate-100">
-            <div className="w-full max-w-[1200px] flex items-center justify-between">
+        <header className="bg-white sticky top-0 h-[80px] w-full flex items-center justify-center z-50 border-b-1 border-b-slate-100">
+            <div className="w-full h-full max-w-[1200px] flex items-center justify-between px-4">
                 <div className="flex items-center gap-20">
                     {/* 로고 */}
                     <LogoBoxHorizontal />

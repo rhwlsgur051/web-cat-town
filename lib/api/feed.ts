@@ -45,6 +45,7 @@ export interface FeedsListResponse {
     total: number;
     page: number;
     limit: number;
+    hasMore: boolean
 }
 
 const url = '/feeds';

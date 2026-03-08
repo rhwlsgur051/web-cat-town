@@ -25,7 +25,7 @@ interface PostCardProps {
     onLikeToggled?: (feedNo: number, liked: boolean) => void;
 }
 
-export const PostCard = memo(({ id, author, content, image, likes, isLiked = false, comments, createdAt, onDelete, onLikeToggled }: PostCardProps) => {
+export const FeedItem = memo(({ id, author, content, image, likes, isLiked = false, comments, createdAt, onDelete, onLikeToggled }: PostCardProps) => {
     const currentUserNo = useAppSelector((state) => state.user.userNo);
     const isMyPost = currentUserNo === author.userNo;
     const [deleting, setDeleting] = useState(false);
@@ -65,9 +65,9 @@ export const PostCard = memo(({ id, author, content, image, likes, isLiked = fal
     };
 
     return (
-        <Card className="w-full shadow-sm">
+        <div className="w-[500px]">
             {/* 작성자 정보 */}
-            <CardHeader className="flex gap-3 justify-between">
+            <div className="flex gap-3 justify-between">
                 <div className="flex gap-3">
                     <UserAvatar
                         src={author.avatar}
@@ -107,18 +107,18 @@ export const PostCard = memo(({ id, author, content, image, likes, isLiked = fal
                         </DropdownMenu>
                     </Dropdown>
                 )}
-            </CardHeader>
+            </div>
 
             {/* 게시글 내용 */}
-            <CardBody className="px-3 py-0 text-small">
+            <div className="text-small">
                 <p className="py-2 whitespace-pre-wrap">
                     {content}
                 </p>
-            </CardBody>
+            </div>
 
             {/* 이미지 */}
-            <div className="px-3 py-2">
-                <div className="relative w-full overflow-hidden rounded-lg">
+            <div className="py-2">
+                <div className="relative w-full overflow-hidden border-1 border-slate-100 rounded-lg">
                     <img
                         alt="게시글 이미지"
                         className="object-contain w-full h-full object-center"
@@ -128,7 +128,7 @@ export const PostCard = memo(({ id, author, content, image, likes, isLiked = fal
             </div>
 
             {/* 좋아요/댓글 */}
-            <CardFooter className="gap-3 px-4 py-3">
+            <div className="gap-3 py-3">
                 <div className="flex gap-4">
                     <Button
                         size="sm"
@@ -161,9 +161,9 @@ export const PostCard = memo(({ id, author, content, image, likes, isLiked = fal
                         댓글 {comments}
                     </Button>
                 </div>
-            </CardFooter>
-        </Card>
+            </div>
+        </div>
     );
 });
 
-PostCard.displayName = 'PostCard';
+FeedItem.displayName = 'FeedItem';
