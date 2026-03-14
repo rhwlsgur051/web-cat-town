@@ -107,7 +107,7 @@ export const JoinPage = () => {
         },
     });
 
-    return <form className='max-w-[500px] w-full flex flex-col gap-4 items-center mt-12 px-4' onSubmit={handleSubmit(onSubmit)}>
+    return <form className='max-w-[500px] w-full flex flex-col gap-4 items-center mt-12 px-4 mx-auto' onSubmit={handleSubmit(onSubmit)}>
         {/* Logo Box */}
         <LogoBoxVertical />
 

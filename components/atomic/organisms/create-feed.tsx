@@ -117,7 +117,7 @@ export const CreateFeed = ({ onCreatedFeed }: { onCreatedFeed: (feed: any) => vo
                     </div>
                 </div>
 
-                <div className="flex gap-4 w-full">
+                <div className="flex gap-4 w-full justify-center">
                     {/* 이미지 업로드 영역 */}
                     <div className="min-w-[300px]">
                         <input

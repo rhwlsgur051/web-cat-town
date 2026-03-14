@@ -52,14 +52,14 @@ export const LoginPage = () => {
     };
 
     return (
-        <form className='max-w-[500px] flex flex-col gap-4 items-center mt-12' onSubmit={handleSubmit(onSubmit)}>
+        <form className='max-w-[500px] flex flex-col gap-4 items-center mt-12 mx-auto' onSubmit={handleSubmit(onSubmit)}>
             {/* Logo Box */}
             <LogoBoxVertical />
             
             <div className="flex flex-col gap-4">
                 <Input 
                     {...register('userId', { required: '아이디를 입력해주세요.' })} 
-                    className="w-full max-w-[300px]" 
+                    className="w-[200px]" 
                     label="아이디" 
                     placeholder="아이디를 입력하세요." 
                     type="text" 
@@ -69,7 +69,7 @@ export const LoginPage = () => {
                 />
                 <Input 
                     {...register('userPwd', { required: '비밀번호를 입력해주세요.' })} 
-                    className="w-full max-w-[300px]" 
+                    className="w-[200px]" 
                     label="비밀번호" 
                     placeholder="비밀번호를 입력하세요." 
                     type="password" 
@@ -82,7 +82,7 @@ export const LoginPage = () => {
             <Button 
                 type="submit" 
                 color="primary" 
-                className="w-full max-w-[300px]" 
+                className="w-[200px]" 
                 isDisabled={!isValid || loginMutation.isPending}
                 isLoading={loginMutation.isPending}
             >
