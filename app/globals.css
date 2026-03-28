@@ -2,23 +2,9 @@
 @plugin './hero.ts';
 @source "../node_modules/@heroui/theme/dist/";
 
-@font-face {
-  font-family: 'Pretendard';
-  src: url('/fonts/PretendardVariable.woff2') format('woff2');
-  font-weight: 45 920;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Luckiest Guy';
-  src: url('/fonts/LuckiestGuy-Regular.ttf') format('truetype');
-  font-display: swap;
-}
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --font-pretendard: 'Pretendard', sans-serif;
   --font-luckiest-guy: 'Luckiest Guy', cursive;
 }
 
@@ -28,14 +14,6 @@
     --foreground: #ededed;
   }
 } */
-
-* {
-  font-family: var(--font-pretendard) !important;
-}
-
-.font-luckiest {
-  font-family: var(--font-luckiest-guy) !important;
-}
 
 html {
   overflow-y: scroll;
